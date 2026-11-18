@@ -1,0 +1,17 @@
+{
+  "name": "La Quête de Mymy",
+  "short_name": "Quête de Mymy",
+  "description": "Une aventure pixel art pour les 30 ans de Mymy",
+  "lang": "fr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#251c2a",
+  "theme_color": "#702744",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
