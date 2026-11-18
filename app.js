@@ -321,7 +321,7 @@ function bGift(i) {
   const sc = scene(T, n), card = newCard(GHINT[type]); p.append(sc, card);
   const h = hero(hn, { l: type === "bushes" ? -1 : type === "run" ? 2 : 5 });
   const cn = n % 2 ? "vaia" : "murphy", c = cat(cn, 10.5, { l: type === "cat" ? 66 : type === "run" ? 36 : 66 });
-  const bx = { tap: 52, shake: 52, hold: 52, cat: 42, run: 70, bushes: 51 }[type];
+  let bx = { tap: 52, shake: 52, hold: 52, cat: 42, run: 70, bushes: 51 }[type];
   const box = el("div", "gbox idle", `<div class="glow"></div>${boxSVG(col)}<div class="ring"></div>`); box.style.left = U(bx);
   sc.append(h); if (type !== "bushes") sc.append(c); sc.append(box);
   let opened = false;
@@ -367,12 +367,12 @@ function bGift(i) {
     c._spr.addEventListener("pointerdown", hit); box.addEventListener("pointerdown", hit);
   }
   if (type === "bushes") {
-    box.style.display = "none"; const xs = [28, 51, 74], hid = (n * 7 + 1) % 3; let found = false;
+    box.style.display = "none"; const xs = [28, 51, 74], hid = Math.floor(Math.random() * 3); let found = false;
     xs.forEach((x, k) => {
       const b = el("div", "bush", BUSH); b.style.left = U(x); sc.append(b);
       b.addEventListener("pointerdown", e => {
         e.preventDefault(); Snd.init(); if (found || opened) return;
-        if (k === hid) { found = true; Snd.sfx("tap"); b.classList.add("up"); box.style.display = ""; box.classList.add("idle"); setTimeout(() => reveal(true), 700); }
+        if (k === hid) { found = true; Snd.sfx("tap"); b.classList.add("up"); box.style.left = U(x); bx = x; box.style.display = ""; box.classList.add("idle"); setTimeout(() => reveal(true), 700); }
         else { Snd.sfx("miss"); b.classList.remove("wig"); void b.offsetWidth; b.classList.add("wig"); say(sc, pick(["Rien ici…", "Pas là !", "Raté !"]), x, 36); }
       });
     });
@@ -408,21 +408,50 @@ function bFinal(i) {
         setTimeout(() => {
           if (!p.isConnected) return;
           Snd.sfx("bam"); bam.classList.add("go"); dig.style.transition = "opacity .5s"; dig.style.opacity = 0; burst(sc, 41, 30, 50);
-          setTimeout(() => { chest.classList.add("in"); stage = 3; setHint(card, "✦ Touche le coffre pour l'ouvrir ✦"); }, 900);
+          setTimeout(() => { chest.classList.add("in"); stage = 3; setHint(card, "✦ Touche le coffre ✦"); }, 900);
         }, 500);
       } });
     });
-    chest.addEventListener("pointerdown", e => {
-      e.preventDefault(); if (stage !== 3) return; stage = 4; Snd.init(); Snd.sfx("win"); Snd.music("finale");
+    let hasKey = false;
+    const openChest = () => {
+      stage = 4; Snd.sfx("win"); Snd.music("finale");
       chest.classList.add("open"); burst(sc, 41, 34, 60); setTimeout(() => burst(sc, 20, 30, 30), 300); setTimeout(() => burst(sc, 62, 30, 30), 500);
       setText(card, FINAL_TXT);
       setTimeout(() => { chest.style.transition = "opacity .8s"; chest.style.opacity = 0; troph.style.opacity = 1; play(troph._spr, 0, 8, { fps: 1000 / 350 }); burst(sc, 41, 20, 40); }, 2200);
       setTimeout(() => unlock(i), 1500);
+    };
+    chest.addEventListener("pointerdown", e => {
+      e.preventDefault(); if (stage !== 3) return; Snd.init();
+      if (hasKey) return;
+      stage = 3.5; Snd.sfx("miss"); burst(sc, 41, 30, 10); say(sc, "Verrouillé ! 🔒", 41, 10);
+      setText(card, "Le coffre est verrouillé ! Une clé est cachée dans la grotte aux cristaux…");
+      setTimeout(() => {
+        if (!p.isConnected) return;
+        portal("La clé t'appelle…", () => {
+          Snd.music("night");
+          Cave.start(book, { snd: Snd, onWin: () => {
+            portal("Retour au coffre…", () => {
+              Cave.close(); hasKey = true; stage = 3.8; setHint(card, "✦ Tu as la clé ! ✦");
+              const k = el("div", "keyfly", KEYSVG); sc.append(k);
+              requestAnimationFrame(() => requestAnimationFrame(() => k.classList.add("go")));
+              setTimeout(() => { k.remove(); if (p.isConnected) openChest(); }, 1300);
+            });
+          } });
+        });
+      }, 2200);
     });
   };
   return p;
 }
 
+const KEYSVG = '<svg viewBox="0 0 30 48"><defs><linearGradient id="kg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3a6"/><stop offset=".5" stop-color="#f3c64f"/><stop offset="1" stop-color="#bd7826"/></linearGradient></defs><g fill="url(#kg)" stroke="#fff0ad" stroke-width="2"><path d="M15 2a9 9 0 1 1 0 18 9 9 0 0 1 0-18zm0 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" fill-rule="evenodd"/><rect x="12" y="19" width="6" height="26"/><rect x="18" y="33" width="9" height="4"/><rect x="18" y="40" width="6" height="4"/></g></svg>';
+function portal(text, mid) {
+  Snd.sfx("bam");
+  const pt = el("div", "portal show", '<div class="pv"><i></i><i></i><i></i><b></b></div><div class="pm"></div><div class="pcap"></div>');
+  pt.lastChild.textContent = text; const m = actor("mymy", 26, { bob: false }); m.className = "actor"; pt.querySelector(".pm").append(m); play(m._spr, 8, 11, { fps: 10 });
+  book.append(pt);
+  setTimeout(mid, 1200); setTimeout(() => pt.remove(), 2400);
+}
 function bBack(i) {
   const p = pageEl("back"); p.innerHTML = '<img src="assets/dos.jpg" alt="Dos du livre : La Quête de Mymy">';
   const r = el("button", "chip pulse", "↻ Rejouer l'aventure"); r.style.bottom = "auto"; r.style.top = U(2.5);
@@ -468,7 +497,7 @@ function afterMount(i, node) {
 }
 function mount(i) { const n = build(i); book.insertBefore(n, book.firstChild); if (n._post) n._post(); return n; }
 function jump(i) {
-  if (busy) return; Cat.hide(); if (curEl) curEl.remove(); document.querySelectorAll(".leaf").forEach(l => l.remove());
+  if (busy) return; Cat.hide(); if (window.Cave) Cave.close(); document.querySelectorAll(".portal").forEach(x => x.remove()); if (curEl) curEl.remove(); document.querySelectorAll(".leaf").forEach(l => l.remove());
   afterMount(i, mount(i));
 }
 function go(i) {

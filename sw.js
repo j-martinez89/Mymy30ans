@@ -1,11 +1,12 @@
 // Service worker : le livre fonctionne hors-ligne après la première ouverture.
 // Pour publier une mise à jour, change le numéro de version ci-dessous.
-const VERSION = "livre-v1";
+const VERSION = "livre-v2";
 const FILES = [
   "./",
   "./index.html",
   "./style.css",
   "./app.js",
+  "./cave.js",
   "./manifest.webmanifest",
   "./assets/page-vierge.jpg",
   "./assets/couverture.jpg",
@@ -34,8 +35,20 @@ self.addEventListener("activate", (e) => {
 });
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
-  e.respondWith(caches.match(e.request, { ignoreSearch: true }).then((hit) => hit || fetch(e.request).then((res) => {
-    if (res && res.ok && new URL(e.request.url).origin === location.origin) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(e.request, copy)); }
-    return res;
-  }).catch(() => caches.match("./index.html"))));
+  const url = new URL(e.request.url);
+  if (url.origin !== location.origin) return;
+  const isImage = /\.(png|jpg|jpeg|webp|gif)$/i.test(url.pathname);
+  if (isImage) {
+    // images : cache d'abord (elles ne changent pas)
+    e.respondWith(caches.match(e.request, { ignoreSearch: true }).then((hit) => hit || fetch(e.request).then((res) => {
+      if (res && res.ok) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(e.request, copy)); }
+      return res;
+    })));
+  } else {
+    // code (html/js/css) : réseau d'abord pour recevoir les mises à jour, cache si hors-ligne
+    e.respondWith(fetch(e.request, { cache: "no-cache" }).then((res) => {
+      if (res && res.ok) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(e.request, copy)); }
+      return res;
+    }).catch(() => caches.match(e.request, { ignoreSearch: true }).then((hit) => hit || caches.match("./index.html"))));
+  }
 });
