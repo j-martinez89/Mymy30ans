@@ -106,7 +106,7 @@ const Snd = {
   on: true, ctx: null, iv: null, step: 0, track: null,
   init() {
     if (!this.on) return;
-    try { const C = window.AudioContext || window.webkitAudioContext; if (!C) return; if (!this.ctx) this.ctx = new C(); if (this.ctx.state === "suspended") this.ctx.resume(); } catch (e) {}
+    try { const C = window.AudioContext || window.webkitAudioContext; if (!C) return; if (!this.ctx) this.ctx = new C(); if (this.ctx.state === "suspended") this.ctx.resume(); if (!this.pageBuf && !this.pageLoading) { this.pageLoading = true; fetch("assets/sfx/page.mp3").then(r => r.arrayBuffer()).then(b => new Promise((ok, ko) => this.ctx.decodeAudioData(b, ok, ko))).then(b => { this.pageBuf = b; }).catch(() => { this.pageLoading = false; }); } } catch (e) {}
   },
   tone(f, d = .2, type = "triangle", v = .05, w = 0) {
     if (!this.on || !this.ctx) return;
@@ -121,6 +121,18 @@ const Snd = {
     for (let i = 0; i < n; i++) x[i] = (Math.random() * 2 - 1) * (1 - i / n);
     const s = c.createBufferSource(), fl = c.createBiquadFilter(), g = c.createGain();
     fl.type = "lowpass"; fl.frequency.value = f; g.gain.value = v; s.buffer = b; s.connect(fl); fl.connect(g); g.connect(c.destination); s.start();
+  },
+  /* vrai bruit de page (mp3), avec le froissement synthétique en secours */
+  page() {
+    const c = this.ctx;
+    if (!this.pageBuf) {
+      if (!this.pageLoading) {
+        this.pageLoading = true;
+        fetch("assets/sfx/page.mp3").then(r => r.arrayBuffer()).then(b => new Promise((ok, ko) => c.decodeAudioData(b, ok, ko))).then(b => { this.pageBuf = b; }).catch(() => { this.pageLoading = false; });
+      }
+      this.paper(); return;
+    }
+    const s = c.createBufferSource(), g = c.createGain(); g.gain.value = .6; s.buffer = this.pageBuf; s.connect(g); g.connect(c.destination); s.start();
   },
   /* bruit de page : froissement de papier doux (montée, crépitement, retombée) */
   paper() {
@@ -142,7 +154,7 @@ const Snd = {
     this.init(); if (!this.on || !this.ctx) return;
     if (n === "tap") this.tone(660, .09, "triangle", .04);
     else if (n === "tapn") { this.tone(520 + (arguments[1] || 0) * 90, .12, "triangle", .05); }
-    else if (n === "flip") this.paper();
+    else if (n === "flip") this.page();
     else if (n === "open") [523, 659, 784, 1047, 1319].forEach((f, i) => this.tone(f, .3, "triangle", .05, i * .07));
     else if (n === "bam") { this.noise(.4, .12, 900); this.tone(110, .45, "sawtooth", .06); this.tone(880, .3, "square", .03, .05); }
     else if (n === "miss") { this.tone(300, .15, "sine", .04); this.tone(240, .2, "sine", .04, .1); }
