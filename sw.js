@@ -1,6 +1,6 @@
 // Service worker : le livre fonctionne hors-ligne après la première ouverture.
 // Pour publier une mise à jour, change le numéro de version ci-dessous.
-const VERSION = "livre-v4";
+const VERSION = "livre-v5";
 const FILES = [
   "./",
   "./index.html",
@@ -17,6 +17,7 @@ const FILES = [
   "./icons/icon-maskable-512.png",
   "./icons/apple-touch-icon.png",
   "./assets/sprites/mymy.png",
+  "./assets/sprites/kithim.png",
   "./assets/sprites/dori.png",
   "./assets/sprites/elona.png",
   "./assets/sprites/jordan.png",

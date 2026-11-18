@@ -31,15 +31,16 @@ const META = {
   mymy: { w: 139, h: 141, frames: 20, ms: 200 }, dori: { w: 182, h: 177, frames: 20, ms: 200 },
   elona: { w: 155, h: 172, frames: 10, ms: 200 }, jordan: { w: 221, h: 288, frames: 16, ms: 140 },
   mathieu: { w: 212, h: 292, frames: 16, ms: 140 }, murphy: { w: 274, h: 198, frames: 20, ms: 200 },
-  vaia: { w: 260, h: 193, frames: 20, ms: 160 }, groupe: { w: 480, h: 360, frames: 9, ms: 130 },
-  trophee: { w: 466, h: 356, frames: 9, ms: 350 }, tresor: { w: 467, h: 333, frames: 9, ms: 350 }
+  vaia: { w: 260, h: 193, frames: 20, ms: 160 }, groupe: { w: 721, h: 268, frames: 6, ms: 130 },
+  trophee: { w: 501, h: 454, frames: 6, ms: 350 }, tresor: { w: 510, h: 510, frames: 6, ms: 350 }, kithim: { w: 276, h: 408, frames: 8, ms: 120 }
 };
 const HERO = {
   mymy: { h: 26, idle: [0, 1], joy: [12, 19], run: [8, 11] },
   dori: { h: 26.5, idle: [0, 1], joy: [12, 19], run: [8, 11] },
   elona: { h: 25, idle: [0, 1], joy: [6, 9], run: [4, 5] },
   jordan: { h: 27, idle: [0, 0], joy: [0, 15], run: [0, 15] },
-  mathieu: { h: 27, idle: [0, 0], joy: [0, 15], run: [0, 15] }
+  mathieu: { h: 27, idle: [0, 0], joy: [0, 15], run: [0, 15] },
+  kithim: { h: 24.5, idle: [0, 0], joy: [1, 6], run: [1, 6], fps: 11 }
 };
 const CATRUN = { murphy: [4, 10], vaia: [4, 9] };
 const live = new Set();
@@ -94,8 +95,8 @@ function hero(name, o = {}) {
   return a;
 }
 function heroIdle(a) { const c = HERO[a._name]; a.classList.remove("hop"); if (c.idle[1] > c.idle[0]) play(a._spr, c.idle[0], c.idle[1], { fps: 2.2 }); else still(a._spr, c.idle[0]); }
-function heroJoy(a) { const c = HERO[a._name]; a.classList.add("hop"); play(a._spr, c.joy[0], c.joy[1], { fps: a._name === "jordan" || a._name === "mathieu" ? 14 : 6 }); }
-function heroRun(a) { const c = HERO[a._name]; play(a._spr, c.run[0], c.run[1], { fps: a._name === "jordan" || a._name === "mathieu" ? 16 : 9 }); }
+function heroJoy(a) { const c = HERO[a._name]; a.classList.add("hop"); play(a._spr, c.joy[0], c.joy[1], { fps: c.fps || (a._name === "jordan" || a._name === "mathieu" ? 14 : 6) }); }
+function heroRun(a) { const c = HERO[a._name]; play(a._spr, c.run[0], c.run[1], { fps: c.fps || (a._name === "jordan" || a._name === "mathieu" ? 16 : 9) }); }
 function cat(name, h, o = {}) {
   const a = actor(name, h, Object.assign({ bob: false }, o)); a._name = name;
   play(a._spr, 0, 1, { fps: 1.4 }); return a;
@@ -287,11 +288,11 @@ function bCover(i) {
 
 function bIntro(i) {
   const p = pageEl(), t = el("div", "intro-txt");
-  const lines = ["Il était une fois une aventurière qui pensait simplement fêter ses 30 ans…", "Mais cette année, une quête extraordinaire l'attendait.", "Trente trésors ont été dispersés. Quatre compagnons ont répondu à l'appel.", "Et une seule héroïne pourra les retrouver…"];
+  const lines = ["Il était une fois une aventurière qui pensait simplement fêter ses 30 ans…", "Mais cette année, une quête extraordinaire l'attendait.", "Trente trésors ont été dispersés. Cinq compagnons ont répondu à l'appel.", "Et une seule héroïne pourra les retrouver…"];
   const ps = lines.map((l, k) => { const e = el("p", k === 3 ? "big" : "", l); t.append(e); return e; });
   p.append(t);
-  const order = [["mathieu", 14], ["elona", 31], ["mymy", 49], ["jordan", 68], ["dori", 85]], nm = { mathieu: "Mathieu", elona: "Elona", mymy: "Mymy", jordan: "Jordan", dori: "Dori" };
-  order.forEach(([n, x]) => { const h = hero(n, { h: n === "mymy" ? 23 : 21, cx: x }); h.style.bottom = U(30); p.append(h); const l = el("div", "names", nm[n]); l.style.left = U(x); l.style.top = U(121); p.append(l); });
+  const order = [["kithim", 13], ["mathieu", 28], ["elona", 43], ["mymy", 58], ["jordan", 73], ["dori", 88]], nm = { kithim: "Kithim", mathieu: "Mathieu", elona: "Elona", mymy: "Mymy", jordan: "Jordan", dori: "Dori" };
+  order.forEach(([n, x]) => { const h = hero(n, { h: n === "mymy" ? 20 : n === "kithim" ? 18 : 18.5, cx: x }); h.style.bottom = U(30); p.append(h); const l = el("div", "names", nm[n]); l.style.left = U(x); l.style.top = U(121); l.style.fontSize = U(2.6); p.append(l); });
   const done = !!st.unlocked[i];
   if (done) ps.forEach(e => e.classList.add("in"));
   p._start = () => {
@@ -309,15 +310,15 @@ function bMap(i) {
   const sc = scene(THEMES[4], 3), card = newCard("✦ Les compagnons arrivent… ✦");
   p.append(sc, card);
   const done = !!st.unlocked[i];
-  const names = [["mathieu", 12], ["elona", 27], ["mymy", 41], ["jordan", 55], ["dori", 69]];
-  const line = names.map(([n, x]) => { const a = hero(n, { h: n === "mymy" ? 19 : 18, cx: x + 2 }); a.style.bottom = U(4); a.style.opacity = done ? 1 : 0; a.style.transition = "opacity .5s"; sc.append(a); return a; });
+  const names = [["kithim", 8], ["mathieu", 20.5], ["elona", 33], ["mymy", 45.5], ["jordan", 58], ["dori", 70.5]];
+  const line = names.map(([n, x]) => { const a = hero(n, { h: n === "mymy" ? 17 : 16, cx: x + 2 }); a.style.bottom = U(4); a.style.opacity = done ? 1 : 0; a.style.transition = "opacity .5s"; sc.append(a); return a; });
   const map = el("div", "map", MAPSVG), bam = el("div", "bam", BAM);
   sc.append(map, bam);
   if (done) { map.classList.add("gone"); setText(card, MAP_TXT); }
   p._start = () => {
     if (done) return;
-    const g = actor("groupe", 24, { l: -36, b: 3, bob: false }); g.style.transition = "left 2.6s linear"; sc.append(g); play(g._spr, 0, 8, { fps: 1000 / 130 });
-    requestAnimationFrame(() => requestAnimationFrame(() => { g.style.left = U(25); }));
+    const g = actor("groupe", 17, { l: -50, b: 3, bob: false }); g.style.transition = "left 2.6s linear"; sc.append(g); play(g._spr, 0, 5, { fps: 1000 / 130 });
+    requestAnimationFrame(() => requestAnimationFrame(() => { g.style.left = U(18); }));
     setTimeout(() => {
       if (!p.isConnected) return;
       g.style.transition = "opacity .5s"; g.style.opacity = 0; line.forEach(a => a.style.opacity = 1); setTimeout(() => g.remove(), 600);
@@ -340,11 +341,11 @@ function bMap(i) {
 }
 
 const GTYPES = ["tap", "shake", "cat", "bushes", "hold", "run"];
-const GHERO = ["mymy", "dori", "jordan", "mathieu", "elona"];
+const GHERO = ["mymy", "dori", "kithim", "jordan", "mathieu", "elona"];
 const GHINT = { tap: "✦ Touche le cadeau pour l'ouvrir ✦", shake: "✦ Secoue le cadeau : touche-le 3 fois ✦", cat: "✦ Touche le chat : il va t'aider ✦", bushes: "✦ Le cadeau se cache sous un buisson ✦", hold: "✦ Maintiens ton doigt sur le cadeau ✦", run: "✦ Touche le sol : ton héros court au cadeau ✦" };
 function bGift(i) {
   const def = PAGES[i], n = def.n, done = !!st.unlocked[i];
-  const type = GTYPES[(n - 1) % 6], hn = GHERO[(n - 1) % 5], T = THEMES[THEME_ORDER[(n - 1) % 12]], col = BOXCOLORS[(n - 1) % 8];
+  const type = GTYPES[(n - 1) % 6], hn = GHERO[((n - 1) + Math.floor((n - 1) / 6)) % 6], T = THEMES[THEME_ORDER[(n - 1) % 12]], col = BOXCOLORS[(n - 1) % 8];
   const p = pageEl(); p.append(chapter("Cadeau n°", n));
   const sc = scene(T, n), card = newCard(GHINT[type]); p.append(sc, card);
   const h = hero(hn, { l: type === "bushes" ? -1 : type === "run" ? 2 : 5 });
@@ -415,27 +416,27 @@ function bFinal(i) {
   p.append(sc, card);
   const chest = el("div", "chest", CHEST), bam = el("div", "bam", BAM); sc.append(chest, bam);
   const troph = actor("trophee", 42, { cx: 41, b: 3, bob: false }); troph.style.opacity = 0; troph.style.transition = "opacity .7s"; sc.append(troph);
-  if (done) { play(troph._spr, 0, 8, { fps: 1000 / 350 }); troph.style.opacity = 1; setText(card, FINAL_TXT); return p; }
+  if (done) { play(troph._spr, 0, 5, { fps: 1000 / 350 }); troph.style.opacity = 1; setText(card, FINAL_TXT); return p; }
   p._start = () => {
-    const g = actor("groupe", 26, { l: -38, b: 3, bob: false }); g.style.transition = "left 2.6s linear"; sc.append(g); play(g._spr, 0, 8, { fps: 1000 / 130 });
-    requestAnimationFrame(() => requestAnimationFrame(() => { g.style.left = U(26); }));
+    const g = actor("groupe", 17, { l: -50, b: 3, bob: false }); g.style.transition = "left 2.6s linear"; sc.append(g); play(g._spr, 0, 5, { fps: 1000 / 130 });
+    requestAnimationFrame(() => requestAnimationFrame(() => { g.style.left = U(18); }));
     let stage = 0, taps = 0, dig = null;
     setTimeout(() => {
       if (!p.isConnected) return;
-      dig = actor("tresor", 40, { cx: 41, b: 3, bob: false }); still(dig._spr, 0); sc.append(dig);
+      dig = actor("tresor", 70, { cx: 41, b: 0, bob: false }); dig._spr.classList.add("fade"); still(dig._spr, 0); sc.append(dig); sc.style.background = "#1c2a1a"; sc.querySelector(".bg").style.opacity = 0;
       g.style.transition = "opacity .4s"; g.style.opacity = 0; setTimeout(() => g.remove(), 500);
       stage = 1; setHint(card, "✦ Touche pour creuser ! (0/3) ✦");
     }, 2800);
     sc.addEventListener("pointerdown", () => {
       if (stage !== 1) return; Snd.init(); taps++; Snd.sfx("tapn", taps); burst(sc, 41, 48, 10);
-      if (taps === 1) play(dig._spr, 0, 2, { fps: 5, loop: false });
-      if (taps === 2) play(dig._spr, 2, 4, { fps: 5, loop: false });
+      if (taps === 1) play(dig._spr, 0, 1, { fps: 5, loop: false });
+      if (taps === 2) play(dig._spr, 1, 2, { fps: 5, loop: false });
       if (taps < 3) { setHint(card, `✦ Creuse encore ! (${taps}/3) ✦`); return; }
       stage = 2; setHint(card, "✦ Il y a quelque chose… ✦");
-      play(dig._spr, 4, 8, { fps: 4, loop: false, done: () => {
+      play(dig._spr, 2, 3, { fps: 3, loop: false, done: () => {
         setTimeout(() => {
           if (!p.isConnected) return;
-          Snd.sfx("bam"); bam.classList.add("go"); dig.style.transition = "opacity .5s"; dig.style.opacity = 0; burst(sc, 41, 30, 50);
+          Snd.sfx("bam"); bam.classList.add("go"); sc.querySelector(".bg").style.opacity = 1; dig.style.transition = "opacity .5s"; dig.style.opacity = 0; burst(sc, 41, 30, 50);
           setTimeout(() => { chest.classList.add("in"); stage = 3; setHint(card, "✦ Touche le coffre ✦"); }, 900);
         }, 500);
       } });
@@ -445,7 +446,7 @@ function bFinal(i) {
       stage = 4; Snd.sfx("win"); Snd.music("finale");
       chest.classList.add("open"); burst(sc, 41, 34, 60); setTimeout(() => burst(sc, 20, 30, 30), 300); setTimeout(() => burst(sc, 62, 30, 30), 500);
       setText(card, FINAL_TXT);
-      setTimeout(() => { chest.style.transition = "opacity .8s"; chest.style.opacity = 0; troph.style.opacity = 1; play(troph._spr, 0, 8, { fps: 1000 / 350 }); burst(sc, 41, 20, 40); }, 2200);
+      setTimeout(() => { chest.style.transition = "opacity .8s"; chest.style.opacity = 0; troph.style.opacity = 1; play(troph._spr, 0, 5, { fps: 1000 / 350 }); burst(sc, 41, 20, 40); }, 2200);
       setTimeout(() => unlock(i), 1500);
     };
     chest.addEventListener("pointerdown", e => {

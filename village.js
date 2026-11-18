@@ -1,7 +1,7 @@
-/* Le village des cinq maisons — prélude avant d'ouvrir le livre */
+/* Le village des six maisons — prélude avant d'ouvrir le livre */
 window.Village = (() => {
 "use strict";
-const W = 520, BOOKX = 478, SPEED = 34;
+const W = 605, BOOKX = 563, SPEED = 34;
 const HOUSES = [
   { n: "Mymy", x: 40, wall: "#f0a3b6", roof: "#a93f69", room: ["#f4c8dc", "#c05b88"], who: "mymy",
     msg: "Bienvenue chez toi, Mymy ! ❤️ Aujourd'hui, tes compagnons t'ont préparé une aventure toute spéciale pour tes 30 ans. Sors découvrir le village : chacun t'attend dans sa maison avec un petit mot." },
@@ -10,9 +10,11 @@ const HOUSES = [
   { n: "Jordan", x: 210, wall: "#f0cf86", roof: "#b7793f", room: ["#f5dfaa", "#ba8a48"], who: "jordan",
     msg: "30 ans, ça se fête comme une vraie aventure ! Garde ton courage, suis les indices et ne lâche rien. Le plus beau trésor t'attend au bout du chemin. Joyeux anniversaire !" },
   { n: "Mathieu", x: 295, wall: "#eaa57e", roof: "#a74f3d", room: ["#f3c8ad", "#b66b50"], who: "mathieu",
-    msg: "Ma chérie, joyeux anniversaire ! ❤️ Que cette quête soit remplie de surprises, de rires et de beaux souvenirs. Tu as déjà trouvé quatre compagnons… il ne manque plus que le trésor ultime !" },
+    msg: "Ma chérie, joyeux anniversaire ! ❤️ Que cette quête soit remplie de surprises, de rires et de beaux souvenirs. Tu as déjà trouvé cinq compagnons… il ne manque plus que le trésor ultime !" },
   { n: "Elona", x: 380, wall: "#b4d49c", roof: "#5f8b61", room: ["#d4e5c7", "#6e9a68"], who: "elona",
-    msg: "Joyeux 30 ans Mymy ! ✨ Je te souhaite plein de bonheur, de magie et de jolies découvertes. Continue d'avancer : on croit tous en toi, et on espère te voir ouvrir le dernier trésor !" }
+    msg: "Joyeux 30 ans Mymy ! ✨ Je te souhaite plein de bonheur, de magie et de jolies découvertes. Continue d'avancer : on croit tous en toi, et on espère te voir ouvrir le dernier trésor !" },
+  { n: "Kithim", x: 465, wall: "#8fd3cb", roof: "#3f8a86", room: ["#cfe9e4", "#4f9a95"], who: "kithim",
+    msg: "Joyeux anniversaire Mymy ! 🎸 Je suis le dernier arrivé dans l'aventure, mais pas le moins motivé ! Ouvre grand les yeux : un trésor t'attend au bout du chemin. Je t'envoie plein de bonne humeur et de musique. Profite bien de ta journée !" }
 ];
 let root = null, raf = 0, offs = [];
 
@@ -45,7 +47,7 @@ function scenery() {
   for (let k = 0; k < 90; k++) o += `<ellipse cx="${R() * W}" cy="${111 + R() * 15}" rx="${.8 + R() * .9}" ry=".5" fill="#d4ba84"/>`;
   for (let k = 0; k < 150; k++) { const y = R() < .5 ? 79 + R() * 27 : 129.5 + R() * 20, c = ["#fff", "#ffd5e4", "#ffe58a", "#f59ab9"][Math.floor(R() * 4)]; o += `<circle cx="${R() * W}" cy="${y}" r=".75" fill="${c}"/>`; }
   for (let i = 0; i < HOUSES.length - 1; i++) { const m = (HOUSES[i].x + HOUSES[i + 1].x) / 2; o += tree(m - 8, 101, .95 + R() * .3) + tree(m + 10, 99, .8 + R() * .3); }
-  o += tree(10, 100, 1) + tree(425, 100, 1) + tree(440, 98, .85) + tree(505, 101, 1.05);
+  o += tree(10, 100, 1) + tree(515, 100, 1) + tree(530, 98, .85) + tree(595, 101, 1.05);
   HOUSES.forEach(h => { o += house(h, 109); });
   return o + "</svg>";
 }
@@ -63,13 +65,13 @@ function start(book, A, onDone) {
   const world = el("div", "vw", scenery()); world.style.width = U(W); root.append(world);
   const place = (a, cx, b) => { a.style.left = U(cx - a._w / 2); a.style.bottom = U(b); world.append(a); return a; };
   // compagnons devant leurs maisons, chats dans le village
-  HOUSES.forEach(h => { if (h.who !== "mymy") place(hero(h.who, { h: 21 }), h.x + 25, 26); });
-  place(cat("vaia", 10), 70, 25); place(cat("murphy", 9.5), 262, 25); place(cat("vaia", 10), 440, 25);
+  HOUSES.forEach(h => { if (h.who !== "mymy") place(hero(h.who, { h: h.who === "kithim" ? 19 : 21 }), h.x + 25, 26); });
+  place(cat("vaia", 10), 70, 25); place(cat("murphy", 9.5), 262, 25); place(cat("vaia", 10), 520, 25);
   // le livre lumineux au bout du chemin
   const bk = el("div", "vl-book", '<i></i><img src="assets/couverture.jpg" alt="">'); bk.style.left = U(BOOKX - 11); world.append(bk);
   const me = hero("mymy", { h: 22 }); me.style.bottom = U(24); world.append(me);
 
-  const top = el("div", "vl-top", '<b>🌸 Le village des cinq maisons</b><span></span>'); root.append(top);
+  const top = el("div", "vl-top", '<b>🌸 Le village des six maisons</b><span></span>'); root.append(top);
   const hint = top.lastChild;
   const ctrl = el("div", "vl-ctrl", '<button class="L" aria-label="Reculer">◀</button><button class="R" aria-label="Avancer">▶</button>'); root.append(ctrl);
   const openBtn = el("button", "vl-open", "📖 Ouvrir le livre ✨"); root.append(openBtn);
@@ -81,7 +83,7 @@ function start(book, A, onDone) {
   setHint();
 
   /* --- écran d'accueil --- */
-  const intro = el("div", "vl-intro", '<div class="vi-box"><small>✦ AVANT D\'OUVRIR LE LIVRE ✦</small><h2>Le village des cinq maisons</h2><p>Tes compagnons t\'ont laissé chacun un petit mot chez eux. Passe leur dire bonjour, maison après maison, avant de découvrir le livre…</p><button>Entrer dans le village 🌿</button></div>');
+  const intro = el("div", "vl-intro", '<div class="vi-box"><small>✦ AVANT D\'OUVRIR LE LIVRE ✦</small><h2>Le village des six maisons</h2><p>Tes compagnons t\'ont laissé chacun un petit mot chez eux. Passe leur dire bonjour, maison après maison, avant de découvrir le livre…</p><button>Entrer dans le village 🌿</button></div>');
   root.append(intro);
   intro.querySelector("button").addEventListener("click", () => {
     Snd.init(); Snd.music("main"); Snd.sfx("win"); intro.remove(); busy = false;
@@ -91,14 +93,14 @@ function start(book, A, onDone) {
   function enter(i) {
     busy = true; auto = false; dir = 0; if (moving) { moving = false; heroIdle(me); }
     const h = HOUSES[i]; Snd.sfx("open");
-    const r = el("div", "vr", `<div class="vr-t"><small>✦ À L'INTÉRIEUR ✦</small><b>Maison de ${h.n}</b></div><div class="vr-room"><div class="vr-win"><i></i></div><div class="vr-pic"></div><div class="vr-floor"></div><div class="vr-rug"></div></div><div class="vr-card"><p></p><button>Continuer ➜</button></div>`);
+    const r = el("div", "vr", `<div class="vr-t"><small>✦ À L'INTÉRIEUR ✦</small><b>Maison ${/^[AEIOUY]/.test(h.n) ? "d'" : "de "}${h.n}</b></div><div class="vr-room"><div class="vr-win"><i></i></div><div class="vr-pic"></div><div class="vr-floor"></div><div class="vr-rug"></div></div><div class="vr-card"><p></p><button>Continuer ➜</button></div>`);
     r.style.setProperty("--w", h.room[0]); r.style.setProperty("--a", h.room[1]);
     const room = r.querySelector(".vr-room"), p = r.querySelector("p"), btn = r.querySelector("button");
     const put = (a, cx, b) => { a.style.left = U(cx - a._w / 2); a.style.bottom = U(b); room.append(a); return a; };
     let who;
     if (h.who === "mymy") { who = put(hero("mymy", { h: 34 }), 44, 5); put(cat("vaia", 14), 14, 5); put(cat("murphy", 13), 76, 5); }
-    else who = put(hero(h.who, { h: 36 }), 44, 5);
-    heroJoy(who); who.classList.remove("hop");
+    else who = put(hero(h.who, { h: h.who === "kithim" ? 32 : 36 }), 44, 5);
+    if (h.who === "kithim") { heroIdle(who); who.classList.add("hop"); } else { heroJoy(who); who.classList.remove("hop"); }
     const ch = Array.from(h.msg); let k = 0, tw = 0;
     btn.style.visibility = "hidden";
     const fin = () => { clearInterval(tw); tw = 0; p.textContent = h.msg; btn.style.visibility = "visible"; };
