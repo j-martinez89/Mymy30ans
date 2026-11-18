@@ -1,12 +1,12 @@
 // Service worker : le livre fonctionne hors-ligne après la première ouverture.
 // Pour publier une mise à jour, change le numéro de version ci-dessous.
-const VERSION = "livre-v2";
+const VERSION = "livre-v3";
 const FILES = [
   "./",
   "./index.html",
   "./style.css",
   "./app.js",
-  "./cave.js",
+  "./cave.js","./village.js",
   "./manifest.webmanifest",
   "./assets/page-vierge.jpg",
   "./assets/couverture.jpg",

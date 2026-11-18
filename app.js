@@ -122,11 +122,27 @@ const Snd = {
     const s = c.createBufferSource(), fl = c.createBiquadFilter(), g = c.createGain();
     fl.type = "lowpass"; fl.frequency.value = f; g.gain.value = v; s.buffer = b; s.connect(fl); fl.connect(g); g.connect(c.destination); s.start();
   },
+  /* bruit de page : froissement de papier doux (montée, crépitement, retombée) */
+  paper() {
+    const c = this.ctx, d = .7, n = Math.floor(c.sampleRate * d), b = c.createBuffer(1, n, c.sampleRate), x = b.getChannelData(0), t0 = c.currentTime;
+    let g = 1;
+    for (let i = 0; i < n; i++) {
+      const t = i / n;
+      if (i % 110 === 0) g = .35 + Math.random() * .65;
+      const env = Math.pow(Math.sin(Math.PI * Math.min(1, t * 1.1)), 1.8) * (1 - t * .45);
+      x[i] = (Math.random() * 2 - 1) * env * g;
+    }
+    const s = c.createBufferSource(), bp = c.createBiquadFilter(), hp = c.createBiquadFilter(), gn = c.createGain();
+    bp.type = "bandpass"; bp.Q.value = .6; bp.frequency.setValueAtTime(1300, t0); bp.frequency.exponentialRampToValueAtTime(4300, t0 + d * .85);
+    hp.type = "highpass"; hp.frequency.value = 700; gn.gain.value = .22;
+    s.buffer = b; s.connect(bp); bp.connect(hp); hp.connect(gn); gn.connect(c.destination); s.start(t0);
+    this.tone(150, .14, "sine", .018, .52); // petit « poc » étouffé quand la page se pose
+  },
   sfx(n) {
     this.init(); if (!this.on || !this.ctx) return;
     if (n === "tap") this.tone(660, .09, "triangle", .04);
     else if (n === "tapn") { this.tone(520 + (arguments[1] || 0) * 90, .12, "triangle", .05); }
-    else if (n === "flip") { this.noise(.45, .06, 2600); this.tone(320, .25, "sine", .02); }
+    else if (n === "flip") this.paper();
     else if (n === "open") [523, 659, 784, 1047, 1319].forEach((f, i) => this.tone(f, .3, "triangle", .05, i * .07));
     else if (n === "bam") { this.noise(.4, .12, 900); this.tone(110, .45, "sawtooth", .06); this.tone(880, .3, "square", .03, .05); }
     else if (n === "miss") { this.tone(300, .15, "sine", .04); this.tone(240, .2, "sine", .04, .1); }
@@ -497,7 +513,7 @@ function afterMount(i, node) {
 }
 function mount(i) { const n = build(i); book.insertBefore(n, book.firstChild); if (n._post) n._post(); return n; }
 function jump(i) {
-  if (busy) return; Cat.hide(); if (window.Cave) Cave.close(); document.querySelectorAll(".portal").forEach(x => x.remove()); if (curEl) curEl.remove(); document.querySelectorAll(".leaf").forEach(l => l.remove());
+  if (busy) return; Cat.hide(); if (window.Cave) Cave.close(); if (window.Village) Village.close(); document.querySelectorAll(".portal").forEach(x => x.remove()); if (curEl) curEl.remove(); document.querySelectorAll(".leaf").forEach(l => l.remove());
   afterMount(i, mount(i));
 }
 function go(i) {
@@ -532,14 +548,17 @@ $("#mClose").addEventListener("click", () => menu.classList.remove("show"));
 $("#mSound").addEventListener("click", () => { const on = Snd.toggle(); $("#mSound").textContent = on ? "🔊 Son activé" : "🔇 Son coupé"; });
 $("#mCover").addEventListener("click", () => { menu.classList.remove("show"); jump(0); });
 $("#mReset").addEventListener("click", () => { $("#mConfirm").style.display = "block"; });
-$("#mYes").addEventListener("click", () => { st = { max: 0, unlocked: {} }; save(); menu.classList.remove("show"); jump(0); });
+$("#mYes").addEventListener("click", () => { st = { max: 0, unlocked: {} }; save(); menu.classList.remove("show"); jump(0); village(); });
+$("#mVillage").addEventListener("click", () => { menu.classList.remove("show"); jump(0); village(); });
 document.addEventListener("visibilitychange", () => { if (!document.hidden && Snd.ctx && Snd.on && Snd.ctx.state === "suspended") Snd.ctx.resume(); });
 
 /* ====================== Démarrage ====================== */
+function village() { window.__vil = Village.start(book, { el, U, hero, heroRun, heroIdle, heroJoy, cat, Snd }, () => { st.village = true; save(); }); }
 ["assets/page-vierge.jpg", "assets/couverture.jpg", "assets/dos.jpg"].concat(Object.keys(META).map(k => `assets/sprites/${k}.png`)).forEach(s => { const im = new Image(); im.src = s; });
 st.max = Math.min(st.max || 0, PAGES.length - 1);
 cur = -1; curEl = null;
-const first = mount(0); afterMount(0, first); // on démarre toujours sur la couverture (un bouton permet de reprendre)
+const first = mount(0); afterMount(0, first);
+if (!st.village) village(); // le village (mots de chacun) s'ouvre avant le livre // on démarre toujours sur la couverture (un bouton permet de reprendre)
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 window.__book = { go, jump, PAGES, st }; // pratique pour les tests
 })();

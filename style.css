@@ -169,3 +169,40 @@ button{font-family:inherit;cursor:pointer}
 .cv-dcard h2{margin:0 0 calc(var(--u)*1);font-size:calc(var(--u)*7)}
 .cv-dcard p{margin:0;font-weight:bold;font-size:calc(var(--u)*3.8)}
 @keyframes marioDeath{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(calc(var(--u)*-2)) rotate(2deg)}}
+
+/* ===== Village des cinq maisons ===== */
+.vl{position:absolute;inset:0;z-index:80;overflow:hidden;background:linear-gradient(#8fd0f2 0%,#d6f0f5 52%,#b7dcae 60%);touch-action:none;transition:opacity .9s}
+.vw{position:absolute;left:0;top:0;height:calc(var(--u)*150);will-change:transform}
+.vw>svg{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
+.vw .actor{z-index:2}
+.vl-top{position:absolute;left:calc(var(--u)*3);top:calc(var(--u)*3);max-width:calc(var(--u)*78);padding:calc(var(--u)*1.6) calc(var(--u)*3);border-radius:calc(var(--u)*3);background:#fffaf0ee;border:calc(var(--u)*.4) solid #d4a15e;color:var(--ink);font-style:italic;z-index:5}
+.vl-top b{display:block;font-size:calc(var(--u)*3.6);color:var(--wine)}
+.vl-top span{display:block;font-size:calc(var(--u)*3.1);margin-top:calc(var(--u)*.4)}
+.vl-ctrl{position:absolute;left:calc(var(--u)*4);right:calc(var(--u)*4);bottom:calc(var(--u)*4);display:flex;justify-content:space-between;z-index:5}
+.vl-ctrl button{width:calc(var(--u)*27);height:calc(var(--u)*17);border-radius:calc(var(--u)*4);border:calc(var(--u)*.6) solid #f1c47a;background:linear-gradient(#b74d77,#762745);color:#fff8ef;font-size:calc(var(--u)*8);line-height:1;padding:0;box-shadow:0 calc(var(--u)*1) 0 #4c1d34;touch-action:none}
+.vl-ctrl button:active{transform:translateY(calc(var(--u)*.6))}
+.vl-book{position:absolute;bottom:calc(var(--u)*34);width:calc(var(--u)*22);z-index:1;animation:float 2.2s ease-in-out infinite alternate}
+.vl-book img{width:100%;display:block;border-radius:calc(var(--u)*.8);box-shadow:0 0 calc(var(--u)*5) calc(var(--u)*1.5) #ffe48a,0 calc(var(--u)*1) 0 #5b2340;position:relative}
+.vl-book i{position:absolute;left:-35%;right:-35%;top:-20%;bottom:-20%;background:radial-gradient(circle,#fff3b0aa 0%,#ffe48a44 40%,transparent 70%)}
+.vl-open{display:none;position:absolute;left:0;right:0;margin:0 auto;width:max-content;bottom:calc(var(--u)*24);padding:calc(var(--u)*2.4) calc(var(--u)*6);border-radius:999px;border:calc(var(--u)*.5) solid #f1c47a;background:linear-gradient(#b74d77,#762745);color:#fff8ef;font-size:calc(var(--u)*4.4);font-weight:bold;z-index:6;animation:pulse 1s ease-in-out infinite alternate;white-space:nowrap}
+.vl-flash{position:absolute;inset:0;background:#fff8e0;opacity:0;pointer-events:none;transition:opacity 1s;z-index:9}
+.vl-flash.on{opacity:1}
+.vl-intro{position:absolute;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;background:#2a1224a8}
+.vi-box{width:calc(var(--u)*86);padding:calc(var(--u)*6) calc(var(--u)*5);text-align:center;border:calc(var(--u)*1) ridge #d7a05c;border-radius:calc(var(--u)*4);background:linear-gradient(145deg,#fff2e4,#f1cbd8);color:#572c43;box-shadow:0 calc(var(--u)*3) calc(var(--u)*8) #000a;animation:pop .45s cubic-bezier(.2,1.4,.4,1) both}
+.vi-box small{display:block;font-family:Arial,sans-serif;font-weight:bold;font-size:calc(var(--u)*2.4);letter-spacing:.2em;color:#a0607f}
+.vi-box h2{margin:calc(var(--u)*2) 0;font-size:calc(var(--u)*7);color:#8d3159;line-height:1.1}
+.vi-box p{margin:0 0 calc(var(--u)*3);font-size:calc(var(--u)*4);line-height:1.4;font-style:italic}
+.vi-box button,.vr-card button{padding:calc(var(--u)*2.4) calc(var(--u)*5);border-radius:999px;border:calc(var(--u)*.5) solid #f1c47a;background:linear-gradient(#b74d77,#762745);color:#fff8ef;font-size:calc(var(--u)*4);font-weight:bold;box-shadow:0 calc(var(--u)*.8) 0 #4c1d34}
+.vr{position:absolute;inset:0;z-index:7;background:linear-gradient(#2a1224,#4a1f3a);animation:pop .4s ease-out both}
+.vr-t{position:absolute;left:0;right:0;top:calc(var(--u)*4);text-align:center;color:#ffe9c4}
+.vr-t small{display:block;font-family:Arial,sans-serif;font-weight:bold;font-size:calc(var(--u)*2.3);letter-spacing:.22em;color:#f8c6dc}
+.vr-t b{display:block;font-size:calc(var(--u)*6.4);text-shadow:0 calc(var(--u)*.5) 0 #702744}
+.vr-room{position:absolute;left:calc(var(--u)*6);top:calc(var(--u)*22);width:calc(var(--u)*88);height:calc(var(--u)*64);border:calc(var(--u)*1) solid #d9a45e;border-radius:calc(var(--u)*3);overflow:hidden;background:repeating-linear-gradient(90deg,var(--w) 0 calc(var(--u)*6),color-mix(in srgb,var(--w) 86%,#fff) calc(var(--u)*6) calc(var(--u)*12))}
+.vr-floor{position:absolute;left:0;right:0;bottom:0;height:calc(var(--u)*20);background:repeating-linear-gradient(90deg,#b98a5e 0 calc(var(--u)*9),#a97a50 calc(var(--u)*9) calc(var(--u)*9.6));border-top:calc(var(--u)*1.2) solid var(--a)}
+.vr-rug{position:absolute;left:calc(var(--u)*16);right:calc(var(--u)*16);bottom:calc(var(--u)*1.5);height:calc(var(--u)*9);border-radius:50%;background:var(--a);opacity:.55}
+.vr-win{position:absolute;left:calc(var(--u)*6);top:calc(var(--u)*6);width:calc(var(--u)*20);height:calc(var(--u)*22);background:linear-gradient(#9fdcf6,#e2f6f8);border:calc(var(--u)*1.2) solid var(--a);border-radius:calc(var(--u)*1) calc(var(--u)*1) 0 0}
+.vr-win i{position:absolute;inset:0;background:linear-gradient(var(--a),var(--a)) center/calc(var(--u)*.8) 100% no-repeat,linear-gradient(var(--a),var(--a)) center/100% calc(var(--u)*.8) no-repeat}
+.vr-pic{position:absolute;right:calc(var(--u)*7);top:calc(var(--u)*7);width:calc(var(--u)*17);height:calc(var(--u)*13);background:radial-gradient(circle at 35% 40%,#ffd5e4 0 20%,transparent 22%),linear-gradient(#cfe9bf,#8fc47e);border:calc(var(--u)*1.2) solid var(--a)}
+.vr .actor{z-index:2}
+.vr-card{position:absolute;left:calc(var(--u)*7);width:calc(var(--u)*86);top:calc(var(--u)*90);height:calc(var(--u)*53);padding:calc(var(--u)*3) calc(var(--u)*4);display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;border:calc(var(--u)*.8) solid #dcab6a;border-radius:calc(var(--u)*3);background:linear-gradient(145deg,#fffaf0,#fdeee6);color:var(--ink)}
+.vr-card p{margin:0;font-size:calc(var(--u)*4);line-height:1.38;font-style:italic}
