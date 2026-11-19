@@ -207,3 +207,6 @@ button{font-family:inherit;cursor:pointer}
 .vr-card{position:absolute;left:calc(var(--u)*7);width:calc(var(--u)*86);top:calc(var(--u)*90);height:calc(var(--u)*53);padding:calc(var(--u)*3) calc(var(--u)*4);display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;border:calc(var(--u)*.8) solid #dcab6a;border-radius:calc(var(--u)*3);background:linear-gradient(145deg,#fffaf0,#fdeee6);color:var(--ink)}
 .vr-card p{margin:0;font-size:calc(var(--u)*4);line-height:1.38;font-style:italic}
 .spr.fade{-webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+
+.actor.step{animation:step .3s ease-in-out infinite alternate}
+@keyframes step{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(calc(var(--u)*-1.1)) rotate(2deg)}}

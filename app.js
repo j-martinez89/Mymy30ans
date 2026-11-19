@@ -28,19 +28,27 @@ const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catc
 
 /* ====================== Sprites ====================== */
 const META = {
-  mymy: { w: 139, h: 141, frames: 20, ms: 200 }, dori: { w: 182, h: 177, frames: 20, ms: 200 },
-  elona: { w: 155, h: 172, frames: 10, ms: 200 }, jordan: { w: 221, h: 288, frames: 16, ms: 140 },
-  mathieu: { w: 212, h: 292, frames: 16, ms: 140 }, murphy: { w: 274, h: 198, frames: 20, ms: 200 },
-  vaia: { w: 260, h: 193, frames: 20, ms: 160 }, groupe: { w: 721, h: 268, frames: 6, ms: 130 },
-  trophee: { w: 501, h: 454, frames: 6, ms: 350 }, tresor: { w: 510, h: 510, frames: 6, ms: 350 }, kithim: { w: 276, h: 408, frames: 8, ms: 120 }
+  mymy: { w: 272, h: 292, frames: 16, ms: 180, u: 27.2 },
+  dori: { w: 250, h: 286, frames: 16, ms: 180, u: 26.6 },
+  elona: { w: 261, h: 310, frames: 16, ms: 180, u: 28.8 },
+  jordan: { w: 348, h: 332, frames: 12, ms: 350, u: 30.9 },
+  mathieu: { w: 237, h: 306, frames: 16, ms: 180, u: 28.5 },
+  kithim: { w: 286, h: 300, frames: 16, ms: 180, u: 27.9 },
+  kguit: { w: 232, h: 308, frames: 16, ms: 180, u: 28.6 },
+  murphy: { w: 274, h: 198, frames: 20, ms: 200 },
+  vaia: { w: 260, h: 193, frames: 20, ms: 160 },
+  groupe: { w: 681, h: 196, frames: 9, ms: 120, u: 18.2 },
+  trophee: { w: 501, h: 454, frames: 6, ms: 350 },
+  tresor: { w: 510, h: 510, frames: 6, ms: 350 }
 };
+/* poses des modèles « dernière refonte » : idle / joy / run = [première, dernière] image ; step = pas rebondi (pas de cycle de marche) */
 const HERO = {
-  mymy: { h: 26, idle: [0, 1], joy: [12, 19], run: [8, 11] },
-  dori: { h: 26.5, idle: [0, 1], joy: [12, 19], run: [8, 11] },
-  elona: { h: 25, idle: [0, 1], joy: [6, 9], run: [4, 5] },
-  jordan: { h: 27, idle: [0, 0], joy: [0, 15], run: [0, 15] },
-  mathieu: { h: 27, idle: [0, 0], joy: [0, 15], run: [0, 15] },
-  kithim: { h: 24.5, idle: [0, 0], joy: [1, 6], run: [1, 6], fps: 11 }
+  mymy: { idle: [9, 10], joy: [1, 3], run: [0, 0], step: true, jf: 6, rf: 6 },
+  dori: { idle: [0, 0], joy: [12, 15], run: [7, 8], jf: 6, rf: 8 },
+  elona: { idle: [0, 1], joy: [12, 15], run: [0, 0], step: true, jf: 6, rf: 6 },
+  jordan: { idle: [0, 1], joy: [4, 7], run: [0, 1], step: true, jf: 5, rf: 6 },
+  mathieu: { idle: [0, 0], joy: [6, 9], run: [0, 0], step: true, jf: 5, rf: 6 },
+  kithim: { idle: [0, 0], joy: [7, 7], run: [1, 6], jf: 6, rf: 11 }
 };
 const CATRUN = { murphy: [4, 10], vaia: [4, 9] };
 const live = new Set();
@@ -89,14 +97,14 @@ function actor(name, h, o = {}) {
   return a;
 }
 function hero(name, o = {}) {
-  const c = HERO[name], a = actor(name, o.h || c.h, o);
+  const c = HERO[name], m = META[name]; let h = o.h || m.u * (o.s || 1); if (o.maxw && h * m.w / m.h > o.maxw) h = o.maxw * m.h / m.w; const a = actor(name, h, o);
   a._name = name;
   if (c.idle[1] > c.idle[0]) play(a._spr, c.idle[0], c.idle[1], { fps: 2.2 }); else still(a._spr, c.idle[0]);
   return a;
 }
-function heroIdle(a) { const c = HERO[a._name]; a.classList.remove("hop"); if (c.idle[1] > c.idle[0]) play(a._spr, c.idle[0], c.idle[1], { fps: 2.2 }); else still(a._spr, c.idle[0]); }
-function heroJoy(a) { const c = HERO[a._name]; a.classList.add("hop"); play(a._spr, c.joy[0], c.joy[1], { fps: c.fps || (a._name === "jordan" || a._name === "mathieu" ? 14 : 6) }); }
-function heroRun(a) { const c = HERO[a._name]; play(a._spr, c.run[0], c.run[1], { fps: c.fps || (a._name === "jordan" || a._name === "mathieu" ? 16 : 9) }); }
+function heroIdle(a) { const c = HERO[a._name]; a.classList.remove("hop", "step"); if (c.idle[1] > c.idle[0]) play(a._spr, c.idle[0], c.idle[1], { fps: 2.2 }); else still(a._spr, c.idle[0]); }
+function heroJoy(a) { const c = HERO[a._name]; a.classList.remove("step"); a.classList.add("hop"); if (c.joy[1] > c.joy[0]) play(a._spr, c.joy[0], c.joy[1], { fps: c.jf }); else still(a._spr, c.joy[0]); }
+function heroRun(a) { const c = HERO[a._name]; a.classList.remove("hop"); a.classList.toggle("step", !!c.step); if (c.run[1] > c.run[0]) play(a._spr, c.run[0], c.run[1], { fps: c.rf }); else still(a._spr, c.run[0]); }
 function cat(name, h, o = {}) {
   const a = actor(name, h, Object.assign({ bob: false }, o)); a._name = name;
   play(a._spr, 0, 1, { fps: 1.4 }); return a;
@@ -292,7 +300,7 @@ function bIntro(i) {
   const ps = lines.map((l, k) => { const e = el("p", k === 3 ? "big" : "", l); t.append(e); return e; });
   p.append(t);
   const order = [["kithim", 13], ["mathieu", 28], ["elona", 43], ["mymy", 58], ["jordan", 73], ["dori", 88]], nm = { kithim: "Kithim", mathieu: "Mathieu", elona: "Elona", mymy: "Mymy", jordan: "Jordan", dori: "Dori" };
-  order.forEach(([n, x]) => { const h = hero(n, { h: n === "mymy" ? 20 : n === "kithim" ? 18 : 18.5, cx: x }); h.style.bottom = U(30); p.append(h); const l = el("div", "names", nm[n]); l.style.left = U(x); l.style.top = U(121); l.style.fontSize = U(2.6); p.append(l); });
+  order.forEach(([n, x]) => { const h = hero(n, { s: .72, maxw: 17, cx: x }); h.style.bottom = U(30); p.append(h); const l = el("div", "names", nm[n]); l.style.left = U(x); l.style.top = U(121); l.style.fontSize = U(2.6); p.append(l); });
   const done = !!st.unlocked[i];
   if (done) ps.forEach(e => e.classList.add("in"));
   p._start = () => {
@@ -311,14 +319,14 @@ function bMap(i) {
   p.append(sc, card);
   const done = !!st.unlocked[i];
   const names = [["kithim", 8], ["mathieu", 20.5], ["elona", 33], ["mymy", 45.5], ["jordan", 58], ["dori", 70.5]];
-  const line = names.map(([n, x]) => { const a = hero(n, { h: n === "mymy" ? 17 : 16, cx: x + 2 }); a.style.bottom = U(4); a.style.opacity = done ? 1 : 0; a.style.transition = "opacity .5s"; sc.append(a); return a; });
+  const line = names.map(([n, x]) => { const a = hero(n, { s: .6, maxw: 14.5, cx: x + 2 }); a.style.bottom = U(4); a.style.opacity = done ? 1 : 0; a.style.transition = "opacity .5s"; sc.append(a); return a; });
   const map = el("div", "map", MAPSVG), bam = el("div", "bam", BAM);
   sc.append(map, bam);
   if (done) { map.classList.add("gone"); setText(card, MAP_TXT); }
   p._start = () => {
     if (done) return;
-    const g = actor("groupe", 17, { l: -50, b: 3, bob: false }); g.style.transition = "left 2.6s linear"; sc.append(g); play(g._spr, 0, 5, { fps: 1000 / 130 });
-    requestAnimationFrame(() => requestAnimationFrame(() => { g.style.left = U(18); }));
+    const g = actor("groupe", 14, { l: -55, b: 3, bob: false }); g.style.transition = "left 2.6s linear"; sc.append(g); play(g._spr, 0, 8, { fps: 1000 / 120 });
+    requestAnimationFrame(() => requestAnimationFrame(() => { g.style.left = U(16); }));
     setTimeout(() => {
       if (!p.isConnected) return;
       g.style.transition = "opacity .5s"; g.style.opacity = 0; line.forEach(a => a.style.opacity = 1); setTimeout(() => g.remove(), 600);
@@ -345,7 +353,7 @@ const GHERO = ["mymy", "dori", "kithim", "jordan", "mathieu", "elona"];
 const GHINT = { tap: "✦ Touche le cadeau pour l'ouvrir ✦", shake: "✦ Secoue le cadeau : touche-le 3 fois ✦", cat: "✦ Touche le chat : il va t'aider ✦", bushes: "✦ Le cadeau se cache sous un buisson ✦", hold: "✦ Maintiens ton doigt sur le cadeau ✦", run: "✦ Touche le sol : ton héros court au cadeau ✦" };
 function bGift(i) {
   const def = PAGES[i], n = def.n, done = !!st.unlocked[i];
-  const type = GTYPES[(n - 1) % 6], hn = GHERO[((n - 1) + Math.floor((n - 1) / 6)) % 6], T = THEMES[THEME_ORDER[(n - 1) % 12]], col = BOXCOLORS[(n - 1) % 8];
+  const type = GTYPES[(n - 1) % 6], hn0 = GHERO[((n - 1) + Math.floor((n - 1) / 6)) % 6], hn = type === "run" && hn0 === "jordan" ? "kithim" : hn0, T = THEMES[THEME_ORDER[(n - 1) % 12]], col = BOXCOLORS[(n - 1) % 8];
   const p = pageEl(); p.append(chapter("Cadeau n°", n));
   const sc = scene(T, n), card = newCard(GHINT[type]); p.append(sc, card);
   const h = hero(hn, { l: type === "bushes" ? -1 : type === "run" ? 2 : 5 });
@@ -418,8 +426,8 @@ function bFinal(i) {
   const troph = actor("trophee", 42, { cx: 41, b: 3, bob: false }); troph.style.opacity = 0; troph.style.transition = "opacity .7s"; sc.append(troph);
   if (done) { play(troph._spr, 0, 5, { fps: 1000 / 350 }); troph.style.opacity = 1; setText(card, FINAL_TXT); return p; }
   p._start = () => {
-    const g = actor("groupe", 17, { l: -50, b: 3, bob: false }); g.style.transition = "left 2.6s linear"; sc.append(g); play(g._spr, 0, 5, { fps: 1000 / 130 });
-    requestAnimationFrame(() => requestAnimationFrame(() => { g.style.left = U(18); }));
+    const g = actor("groupe", 14, { l: -55, b: 3, bob: false }); g.style.transition = "left 2.6s linear"; sc.append(g); play(g._spr, 0, 8, { fps: 1000 / 120 });
+    requestAnimationFrame(() => requestAnimationFrame(() => { g.style.left = U(16); }));
     let stage = 0, taps = 0, dig = null;
     setTimeout(() => {
       if (!p.isConnected) return;
@@ -477,7 +485,7 @@ const KEYSVG = '<svg viewBox="0 0 30 48"><defs><linearGradient id="kg" x1="0" y1
 function portal(text, mid) {
   Snd.sfx("bam");
   const pt = el("div", "portal show", '<div class="pv"><i></i><i></i><i></i><b></b></div><div class="pm"></div><div class="pcap"></div>');
-  pt.lastChild.textContent = text; const m = actor("mymy", 26, { bob: false }); m.className = "actor"; pt.querySelector(".pm").append(m); play(m._spr, 8, 11, { fps: 10 });
+  pt.lastChild.textContent = text; const m = actor("mymy", 26, { bob: false }); m.className = "actor step"; pt.querySelector(".pm").append(m); still(m._spr, 0);
   book.append(pt);
   setTimeout(mid, 1200); setTimeout(() => pt.remove(), 2400);
 }
@@ -566,7 +574,7 @@ $("#mVillage").addEventListener("click", () => { menu.classList.remove("show"); 
 document.addEventListener("visibilitychange", () => { if (!document.hidden && Snd.ctx && Snd.on && Snd.ctx.state === "suspended") Snd.ctx.resume(); });
 
 /* ====================== Démarrage ====================== */
-function village() { window.__vil = Village.start(book, { el, U, hero, heroRun, heroIdle, heroJoy, cat, Snd }, () => { st.village = true; save(); }); }
+function village() { window.__vil = Village.start(book, { el, U, hero, heroRun, heroIdle, heroJoy, cat, Snd, actor, play, META }, () => { st.village = true; save(); }); }
 ["assets/page-vierge.jpg", "assets/couverture.jpg", "assets/dos.jpg"].concat(Object.keys(META).map(k => `assets/sprites/${k}.png`)).forEach(s => { const im = new Image(); im.src = s; });
 st.max = Math.min(st.max || 0, PAGES.length - 1);
 cur = -1; curEl = null;

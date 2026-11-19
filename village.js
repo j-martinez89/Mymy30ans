@@ -60,16 +60,16 @@ function close() {
 
 function start(book, A, onDone) {
   close();
-  const { el, U, hero, heroRun, heroIdle, heroJoy, cat, Snd } = A;
+  const { el, U, hero, heroRun, heroIdle, heroJoy, cat, Snd, actor, play, META } = A;
   root = el("div", "vl");
   const world = el("div", "vw", scenery()); world.style.width = U(W); root.append(world);
   const place = (a, cx, b) => { a.style.left = U(cx - a._w / 2); a.style.bottom = U(b); world.append(a); return a; };
   // compagnons devant leurs maisons, chats dans le village
-  HOUSES.forEach(h => { if (h.who !== "mymy") place(hero(h.who, { h: h.who === "kithim" ? 19 : 21 }), h.x + 25, 26); });
+  HOUSES.forEach(h => { if (h.who !== "mymy") place(hero(h.who, { s: .78, maxw: 27 }), h.x + 26, 26); });
   place(cat("vaia", 10), 70, 25); place(cat("murphy", 9.5), 262, 25); place(cat("vaia", 10), 520, 25);
   // le livre lumineux au bout du chemin
   const bk = el("div", "vl-book", '<i></i><img src="assets/couverture.jpg" alt="">'); bk.style.left = U(BOOKX - 11); world.append(bk);
-  const me = hero("mymy", { h: 22 }); me.style.bottom = U(24); world.append(me);
+  const me = hero("mymy", { s: .8 }); me.style.bottom = U(24); world.append(me);
 
   const top = el("div", "vl-top", '<b>🌸 Le village des six maisons</b><span></span>'); root.append(top);
   const hint = top.lastChild;
@@ -98,9 +98,10 @@ function start(book, A, onDone) {
     const room = r.querySelector(".vr-room"), p = r.querySelector("p"), btn = r.querySelector("button");
     const put = (a, cx, b) => { a.style.left = U(cx - a._w / 2); a.style.bottom = U(b); room.append(a); return a; };
     let who;
-    if (h.who === "mymy") { who = put(hero("mymy", { h: 34 }), 44, 5); put(cat("vaia", 14), 14, 5); put(cat("murphy", 13), 76, 5); }
-    else who = put(hero(h.who, { h: h.who === "kithim" ? 32 : 36 }), 44, 5);
-    if (h.who === "kithim") { heroIdle(who); who.classList.add("hop"); } else { heroJoy(who); who.classList.remove("hop"); }
+    if (h.who === "mymy") { who = put(hero("mymy", { s: 1.25 }), 44, 5); put(cat("vaia", 14), 14, 5); put(cat("murphy", 13), 76, 5); }
+    else if (h.who === "kithim") { who = put(actor("kguit", META.kguit.u * 1.25, { bob: false }), 44, 5); play(who._spr, 0, 15, { fps: 6 }); }
+    else who = put(hero(h.who, { s: 1.25, maxw: 50 }), 44, 5);
+    if (h.who !== "kithim") { heroJoy(who); who.classList.remove("hop"); }
     const ch = Array.from(h.msg); let k = 0, tw = 0;
     btn.style.visibility = "hidden";
     const fin = () => { clearInterval(tw); tw = 0; p.textContent = h.msg; btn.style.visibility = "visible"; };
