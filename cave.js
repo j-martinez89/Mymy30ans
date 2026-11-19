@@ -15,6 +15,7 @@ function fireTrapY(h, now) { return h.baseY + Math.sin(now * h.speed + h.phase) 
 const caveCoinsMap = [[300,350],[360,350],[565,292],[625,292],[865,350],[930,350],[1120,285],[1180,285],[1420,340],[1480,340],[1680,275],[1740,275],[1985,345],[2045,345],[2245,285],[2305,285],[2535,345],[2595,345],[2740,405]];
 const GAPS = [[650,735],[1510,1590],[2300,2380]];
 const SHEET = new Image(); SHEET.src = "assets/sprites/mymy.png";
+const RUN = new Image(); RUN.src = "assets/sprites/mymy_run.png"; const RUNF = 9, RUNRATIO = 26.2 / 27.2;
 const FRAMES = 16; // images du modèle de Mymy : 0 = marche (profil), 1 = joie, 9/10 = repos
 
 let root, caveCanvas, caveCtx, opts, running = false, raf = 0, last = 0;
@@ -227,12 +228,16 @@ function draw(){
  }
  // Mymy (sprites du livre)
  const airborne=!cavePlayer.onGround||Math.abs(cavePlayer.vy)>1, moving=!!(caveHeld.left||caveHeld.right);
- let fk=0,bob=0; if(airborne)fk=1; else if(moving){fk=0;bob=Math.abs(Math.sin(now/85))*5;} else fk=9+Math.floor(now/450)%2;
+ let fk=0,bob=0,useRun=false; if(airborne)fk=1; else if(moving){useRun=RUN.complete&&RUN.naturalWidth>0;fk=Math.floor(now/95)%RUNF;} else fk=9+Math.floor(now/450)%2;
  if(SHEET.complete&&SHEET.naturalWidth){
   const CW=SHEET.naturalWidth/FRAMES,CH=SHEET.naturalHeight,dh=cavePlayer.h+8,dw=dh*CW/CH,dx=cavePlayer.x-cam+(cavePlayer.w-dw)/2,dy=cavePlayer.y-6-bob;
-  ctx.save();ctx.imageSmoothingEnabled=false;
+  ctx.save();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";
   if(now<caveInvulnUntil&&Math.floor(now/110)%2===0)ctx.globalAlpha=.28;
-  if(cavePlayer.face<0){ctx.translate(dx+dw,dy);ctx.scale(-1,1);ctx.drawImage(SHEET,fk*CW,0,CW,CH,0,0,dw,dh);}
+  if(useRun){
+   const rw=RUN.naturalWidth/RUNF,rh=RUN.naturalHeight,hh=dh*RUNRATIO,ww=hh*rw/rh,xx=cavePlayer.x-cam+(cavePlayer.w-ww)/2,yy=dy+dh-hh;
+   if(cavePlayer.face<0){ctx.translate(xx+ww,yy);ctx.scale(-1,1);ctx.drawImage(RUN,fk*rw,0,rw,rh,0,0,ww,hh);}
+   else ctx.drawImage(RUN,fk*rw,0,rw,rh,xx,yy,ww,hh);
+  } else if(cavePlayer.face<0){ctx.translate(dx+dw,dy);ctx.scale(-1,1);ctx.drawImage(SHEET,fk*CW,0,CW,CH,0,0,dw,dh);}
   else ctx.drawImage(SHEET,fk*CW,0,CW,CH,dx,dy,dw,dh);
   ctx.restore();
  }

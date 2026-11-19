@@ -39,15 +39,20 @@ const META = {
   vaia: { w: 260, h: 193, frames: 20, ms: 160 },
   groupe: { w: 681, h: 196, frames: 9, ms: 120, u: 18.2 },
   trophee: { w: 501, h: 454, frames: 6, ms: 350 },
-  tresor: { w: 510, h: 510, frames: 6, ms: 350 }
+  tresor: { w: 510, h: 510, frames: 6, ms: 350 },
+  mymy_run: { w: 122, h: 175, frames: 9, ms: 120, u: 26.2 },
+  dori_run: { w: 118, h: 181, frames: 9, ms: 120, u: 27.1 },
+  jordan_run: { w: 96, h: 182, frames: 9, ms: 120, u: 27.2 },
+  elona_run: { w: 117, h: 178, frames: 9, ms: 120, u: 26.6 },
+  mathieu_run: { w: 97, h: 189, frames: 9, ms: 120, u: 28.3 }
 };
 /* poses des modèles « dernière refonte » : idle / joy / run = [première, dernière] image ; step = pas rebondi (pas de cycle de marche) */
 const HERO = {
-  mymy: { idle: [9, 10], joy: [1, 3], run: [0, 0], step: true, jf: 6, rf: 6 },
-  dori: { idle: [0, 0], joy: [12, 15], run: [7, 8], jf: 6, rf: 8 },
-  elona: { idle: [0, 1], joy: [12, 15], run: [0, 0], step: true, jf: 6, rf: 6 },
-  jordan: { idle: [0, 1], joy: [4, 7], run: [0, 1], step: true, jf: 5, rf: 6 },
-  mathieu: { idle: [0, 0], joy: [6, 9], run: [0, 0], step: true, jf: 5, rf: 6 },
+  mymy: { idle: [9, 10], joy: [1, 3], runSheet: "mymy_run", jf: 6 },
+  dori: { idle: [0, 0], joy: [12, 15], runSheet: "dori_run", jf: 6 },
+  elona: { idle: [0, 1], joy: [12, 15], runSheet: "elona_run", jf: 6 },
+  jordan: { idle: [0, 1], joy: [4, 7], runSheet: "jordan_run", jf: 5 },
+  mathieu: { idle: [0, 0], joy: [6, 9], runSheet: "mathieu_run", jf: 5 },
   kithim: { idle: [0, 0], joy: [7, 7], run: [1, 6], jf: 6, rf: 11 }
 };
 const CATRUN = { murphy: [4, 10], vaia: [4, 9] };
@@ -102,9 +107,20 @@ function hero(name, o = {}) {
   if (c.idle[1] > c.idle[0]) play(a._spr, c.idle[0], c.idle[1], { fps: 2.2 }); else still(a._spr, c.idle[0]);
   return a;
 }
-function heroIdle(a) { const c = HERO[a._name]; a.classList.remove("hop", "step"); if (c.idle[1] > c.idle[0]) play(a._spr, c.idle[0], c.idle[1], { fps: 2.2 }); else still(a._spr, c.idle[0]); }
-function heroJoy(a) { const c = HERO[a._name]; a.classList.remove("step"); a.classList.add("hop"); if (c.joy[1] > c.joy[0]) play(a._spr, c.joy[0], c.joy[1], { fps: c.jf }); else still(a._spr, c.joy[0]); }
-function heroRun(a) { const c = HERO[a._name]; a.classList.remove("hop"); a.classList.toggle("step", !!c.step); if (c.run[1] > c.run[0]) play(a._spr, c.run[0], c.run[1], { fps: c.rf }); else still(a._spr, c.run[0]); }
+/* change la planche d'un héros (pose normale <-> course) en gardant sa taille, ses pieds au sol et son centre */
+function useSheet(a, sheet) {
+  const e = a._spr, s = e._s; if (s.sheet === sheet) return; s.sheet = sheet;
+  const m = META[sheet], f = a._h / META[a._name].u, h = m.u * f, w = h * m.w / m.h;
+  s.m = m; e.style.width = U(w); e.style.height = U(h); e.style.marginLeft = U((a._w - w) / 2);
+  e.style.backgroundImage = `url(assets/sprites/${sheet}.png)`; e.style.backgroundSize = `${m.frames * 100}% 100%`;
+}
+function heroIdle(a) { const c = HERO[a._name]; a.classList.remove("hop", "step"); useSheet(a, a._name); if (c.idle[1] > c.idle[0]) play(a._spr, c.idle[0], c.idle[1], { fps: 2.2 }); else still(a._spr, c.idle[0]); }
+function heroJoy(a) { const c = HERO[a._name]; a.classList.remove("step"); a.classList.add("hop"); useSheet(a, a._name); if (c.joy[1] > c.joy[0]) play(a._spr, c.joy[0], c.joy[1], { fps: c.jf }); else still(a._spr, c.joy[0]); }
+function heroRun(a) {
+  const c = HERO[a._name]; a.classList.remove("hop", "step");
+  if (c.runSheet) { useSheet(a, c.runSheet); play(a._spr, 0, META[c.runSheet].frames - 1, { fps: 10.5 }); }
+  else { useSheet(a, a._name); play(a._spr, c.run[0], c.run[1], { fps: c.rf }); }
+}
 function cat(name, h, o = {}) {
   const a = actor(name, h, Object.assign({ bob: false }, o)); a._name = name;
   play(a._spr, 0, 1, { fps: 1.4 }); return a;
@@ -353,7 +369,7 @@ const GHERO = ["mymy", "dori", "kithim", "jordan", "mathieu", "elona"];
 const GHINT = { tap: "✦ Touche le cadeau pour l'ouvrir ✦", shake: "✦ Secoue le cadeau : touche-le 3 fois ✦", cat: "✦ Touche le chat : il va t'aider ✦", bushes: "✦ Le cadeau se cache sous un buisson ✦", hold: "✦ Maintiens ton doigt sur le cadeau ✦", run: "✦ Touche le sol : ton héros court au cadeau ✦" };
 function bGift(i) {
   const def = PAGES[i], n = def.n, done = !!st.unlocked[i];
-  const type = GTYPES[(n - 1) % 6], hn0 = GHERO[((n - 1) + Math.floor((n - 1) / 6)) % 6], hn = type === "run" && hn0 === "jordan" ? "kithim" : hn0, T = THEMES[THEME_ORDER[(n - 1) % 12]], col = BOXCOLORS[(n - 1) % 8];
+  const type = GTYPES[(n - 1) % 6], hn = GHERO[((n - 1) + Math.floor((n - 1) / 6)) % 6], T = THEMES[THEME_ORDER[(n - 1) % 12]], col = BOXCOLORS[(n - 1) % 8];
   const p = pageEl(); p.append(chapter("Cadeau n°", n));
   const sc = scene(T, n), card = newCard(GHINT[type]); p.append(sc, card);
   const h = hero(hn, { l: type === "bushes" ? -1 : type === "run" ? 2 : 5 });
@@ -485,7 +501,7 @@ const KEYSVG = '<svg viewBox="0 0 30 48"><defs><linearGradient id="kg" x1="0" y1
 function portal(text, mid) {
   Snd.sfx("bam");
   const pt = el("div", "portal show", '<div class="pv"><i></i><i></i><i></i><b></b></div><div class="pm"></div><div class="pcap"></div>');
-  pt.lastChild.textContent = text; const m = actor("mymy", 26, { bob: false }); m.className = "actor step"; pt.querySelector(".pm").append(m); still(m._spr, 0);
+  pt.lastChild.textContent = text; const m = hero("mymy", { s: .95, bob: false }); m.className = "actor"; pt.querySelector(".pm").append(m); heroRun(m);
   book.append(pt);
   setTimeout(mid, 1200); setTimeout(() => pt.remove(), 2400);
 }

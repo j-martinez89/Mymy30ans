@@ -18,7 +18,7 @@ button{font-family:inherit;cursor:pointer}
 
 /* ---------- Sprites ---------- */
 .actor{position:absolute}
-.spr{background-repeat:no-repeat;image-rendering:pixelated;pointer-events:none}
+.spr{background-repeat:no-repeat;pointer-events:none}
 .spr.flip{transform:scaleX(-1)}
 .actor.bob{animation:bob 1.7s ease-in-out infinite alternate}
 @keyframes bob{to{transform:translateY(calc(var(--u)*-.5))}}
