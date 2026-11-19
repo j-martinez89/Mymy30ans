@@ -28,23 +28,23 @@ const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catc
 
 /* ====================== Sprites ====================== */
 const META = {
-  mymy: { w: 272, h: 292, frames: 16, ms: 180, u: 27.2 },
-  dori: { w: 250, h: 286, frames: 16, ms: 180, u: 26.6 },
-  elona: { w: 261, h: 310, frames: 16, ms: 180, u: 28.8 },
-  jordan: { w: 349, h: 334, frames: 12, ms: 350, u: 31.1 },
-  mathieu: { w: 243, h: 308, frames: 16, ms: 180, u: 28.6 },
-  kithim: { w: 252, h: 302, frames: 16, ms: 180, u: 28.1 },
-  kguit: { w: 232, h: 308, frames: 16, ms: 180, u: 28.6 },
+  mymy: { w: 280, h: 292, frames: 16, ms: 180, u: 27.2 },
+  dori: { w: 258, h: 286, frames: 16, ms: 180, u: 26.6 },
+  elona: { w: 269, h: 310, frames: 16, ms: 180, u: 28.8 },
+  jordan: { w: 357, h: 334, frames: 12, ms: 350, u: 31.1 },
+  mathieu: { w: 251, h: 308, frames: 16, ms: 180, u: 28.6 },
+  kithim: { w: 260, h: 302, frames: 16, ms: 180, u: 28.1 },
+  kguit: { w: 240, h: 308, frames: 16, ms: 180, u: 28.6 },
   murphy: { w: 274, h: 198, frames: 20, ms: 200 },
   vaia: { w: 260, h: 193, frames: 20, ms: 160 },
-  groupe: { w: 681, h: 196, frames: 9, ms: 120, u: 18.2 },
+  groupe: { w: 689, h: 196, frames: 9, ms: 120, u: 18.2 },
   trophee: { w: 501, h: 454, frames: 6, ms: 350 },
   tresor: { w: 510, h: 510, frames: 6, ms: 350 },
-  mymy_run: { w: 122, h: 175, frames: 9, ms: 120, u: 26.2 },
-  dori_run: { w: 118, h: 181, frames: 9, ms: 120, u: 27.1 },
-  jordan_run: { w: 96, h: 182, frames: 9, ms: 120, u: 27.2 },
-  elona_run: { w: 117, h: 178, frames: 9, ms: 120, u: 26.6 },
-  mathieu_run: { w: 97, h: 189, frames: 9, ms: 120, u: 28.3 }
+  mymy_run: { w: 130, h: 175, frames: 9, ms: 120, u: 26.0 },
+  dori_run: { w: 126, h: 181, frames: 9, ms: 120, u: 26.9 },
+  jordan_run: { w: 104, h: 182, frames: 9, ms: 120, u: 27.1 },
+  elona_run: { w: 125, h: 178, frames: 9, ms: 120, u: 26.5 },
+  mathieu_run: { w: 105, h: 189, frames: 9, ms: 120, u: 28.1 }
 };
 /* poses des modèles « dernière refonte » : idle / joy / run = [première, dernière] image ; step = pas rebondi (pas de cycle de marche) */
 const HERO = {
@@ -118,7 +118,7 @@ function heroIdle(a) { const c = HERO[a._name]; a.classList.remove("hop", "step"
 function heroJoy(a) { const c = HERO[a._name]; a.classList.remove("step"); a.classList.add("hop"); useSheet(a, a._name); if (c.joy[1] > c.joy[0]) play(a._spr, c.joy[0], c.joy[1], { fps: c.jf }); else still(a._spr, c.joy[0]); }
 function heroRun(a) {
   const c = HERO[a._name]; a.classList.remove("hop", "step");
-  if (c.runSheet) { useSheet(a, c.runSheet); play(a._spr, 0, META[c.runSheet].frames - 1, { fps: 10.5 }); }
+  if (c.runSheet) { useSheet(a, c.runSheet); play(a._spr, 0, META[c.runSheet].frames - 1, { fps: 13 }); }
   else { useSheet(a, a._name); play(a._spr, c.run[0], c.run[1], { fps: c.rf }); }
 }
 function cat(name, h, o = {}) {
