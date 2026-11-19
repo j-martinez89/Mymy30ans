@@ -40,11 +40,11 @@ const META = {
   groupe: { w: 689, h: 196, frames: 9, ms: 120, u: 18.2 },
   trophee: { w: 501, h: 454, frames: 6, ms: 350 },
   tresor: { w: 510, h: 510, frames: 6, ms: 350 },
-  mymy_run: { w: 130, h: 175, frames: 9, ms: 120, u: 26.0 },
-  dori_run: { w: 126, h: 181, frames: 9, ms: 120, u: 26.9 },
-  jordan_run: { w: 104, h: 182, frames: 9, ms: 120, u: 27.1 },
-  elona_run: { w: 125, h: 178, frames: 9, ms: 120, u: 26.5 },
-  mathieu_run: { w: 105, h: 189, frames: 9, ms: 120, u: 28.1 }
+  mymy_run: { w: 132, h: 175, frames: 9, ms: 120, u: 26.0 },
+  dori_run: { w: 128, h: 181, frames: 9, ms: 120, u: 26.9 },
+  jordan_run: { w: 107, h: 182, frames: 9, ms: 120, u: 27.1 },
+  elona_run: { w: 128, h: 178, frames: 9, ms: 120, u: 26.5 },
+  mathieu_run: { w: 109, h: 189, frames: 9, ms: 120, u: 28.1 }
 };
 /* poses des modèles « dernière refonte » : idle / joy / run = [première, dernière] image ; step = pas rebondi (pas de cycle de marche) */
 const HERO = {
