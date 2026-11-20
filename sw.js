@@ -1,6 +1,6 @@
 // Service worker : le livre fonctionne hors-ligne après la première ouverture.
 // Pour publier une mise à jour, change le numéro de version ci-dessous.
-const VERSION = "livre-v15";
+const VERSION = "livre-v16";
 const FILES = [
   "./",
   "./index.html",
@@ -23,6 +23,7 @@ const FILES = [
   "./assets/sprites/dori_run.png",
   "./assets/sprites/jordan_run.png",
   "./assets/sprites/jordanb.png",
+  "./assets/sprites/jordb_joy.png",
   "./assets/sprites/elona_run.png",
   "./assets/sprites/mathieu_run.png",
   "./assets/sprites/dori.png",

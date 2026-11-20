@@ -32,7 +32,8 @@ const META = {
   dori: { w: 258, h: 286, frames: 16, ms: 180, u: 26.6 },
   elona: { w: 269, h: 310, frames: 16, ms: 180, u: 28.8 },
   jordan: { w: 357, h: 334, frames: 12, ms: 350, u: 31.1 },
-  jordanb: { w: 291, h: 393, frames: 8, ms: 110, u: 36.5 },
+  jordanb: { w: 210, h: 380, frames: 9, ms: 180, u: 28.2 },
+  jordb_joy: { w: 355, h: 377, frames: 9, ms: 180, u: 28.1 },
   mathieu: { w: 251, h: 308, frames: 16, ms: 180, u: 28.6 },
   kithim: { w: 260, h: 302, frames: 16, ms: 180, u: 28.1 },
   kguit: { w: 240, h: 308, frames: 16, ms: 180, u: 28.6 },
@@ -43,7 +44,7 @@ const META = {
   tresor: { w: 510, h: 510, frames: 6, ms: 350 },
   mymy_run: { w: 132, h: 175, frames: 9, ms: 120, u: 26.0 },
   dori_run: { w: 128, h: 181, frames: 9, ms: 120, u: 26.9 },
-  jordan_run: { w: 291, h: 393, frames: 8, ms: 110, u: 36.5 },
+  jordan_run: { w: 291, h: 393, frames: 8, ms: 110, u: 29.2 },
   elona_run: { w: 128, h: 178, frames: 9, ms: 120, u: 26.5 },
   mathieu_run: { w: 109, h: 189, frames: 9, ms: 120, u: 28.1 }
 };
@@ -53,7 +54,7 @@ const HERO = {
   dori: { idle: [0, 0], joy: [12, 15], runSheet: "dori_run", jf: 6 },
   elona: { idle: [0, 1], joy: [12, 15], runSheet: "elona_run", jf: 6 },
   jordan: { idle: [0, 1], joy: [4, 7], runSheet: "jordan_run", jf: 5 },
-  jordanb: { idle: [0, 0], joy: [3, 4], run: [0, 7], jf: 6, rf: 11 },
+  jordanb: { idle: [0, 8], ifps: 5, joy: [0, 8], joySheet: "jordb_joy", nohop: true, jf: 6, runSheet: "jordan_run" },
   mathieu: { idle: [0, 0], joy: [6, 9], runSheet: "mathieu_run", jf: 5 },
   kithim: { idle: [0, 0], joy: [7, 7], run: [1, 6], jf: 6, rf: 11 }
 };
@@ -106,7 +107,7 @@ function actor(name, h, o = {}) {
 function hero(name, o = {}) {
   const c = HERO[name], m = META[name]; let h = o.h || m.u * (o.s || 1); if (o.maxw && h * m.w / m.h > o.maxw) h = o.maxw * m.h / m.w; const a = actor(name, h, o);
   a._name = name;
-  if (c.idle[1] > c.idle[0]) play(a._spr, c.idle[0], c.idle[1], { fps: 2.2 }); else still(a._spr, c.idle[0]);
+  if (c.idle[1] > c.idle[0]) play(a._spr, c.idle[0], c.idle[1], { fps: c.ifps || 2.2 }); else still(a._spr, c.idle[0]);
   return a;
 }
 /* change la planche d'un héros (pose normale <-> course) en gardant sa taille, ses pieds au sol et son centre */
@@ -116,8 +117,8 @@ function useSheet(a, sheet) {
   s.m = m; e.style.width = U(w); e.style.height = U(h); e.style.marginLeft = U((a._w - w) / 2);
   e.style.backgroundImage = `url(assets/sprites/${sheet}.png)`; e.style.backgroundSize = `${m.frames * 100}% 100%`;
 }
-function heroIdle(a) { const c = HERO[a._name]; a.classList.remove("hop", "step"); useSheet(a, a._name); if (c.idle[1] > c.idle[0]) play(a._spr, c.idle[0], c.idle[1], { fps: 2.2 }); else still(a._spr, c.idle[0]); }
-function heroJoy(a) { const c = HERO[a._name]; a.classList.remove("step"); a.classList.add("hop"); useSheet(a, a._name); if (c.joy[1] > c.joy[0]) play(a._spr, c.joy[0], c.joy[1], { fps: c.jf }); else still(a._spr, c.joy[0]); }
+function heroIdle(a) { const c = HERO[a._name]; a.classList.remove("hop", "step"); useSheet(a, a._name); if (c.idle[1] > c.idle[0]) play(a._spr, c.idle[0], c.idle[1], { fps: c.ifps || 2.2 }); else still(a._spr, c.idle[0]); }
+function heroJoy(a) { const c = HERO[a._name]; a.classList.remove("step"); if (!c.nohop) a.classList.add("hop"); useSheet(a, c.joySheet || a._name); if (c.joy[1] > c.joy[0]) play(a._spr, c.joy[0], c.joy[1], { fps: c.jf }); else still(a._spr, c.joy[0]); }
 function heroRun(a) {
   const c = HERO[a._name]; a.classList.remove("hop", "step");
   if (c.runSheet) { useSheet(a, c.runSheet); play(a._spr, 0, META[c.runSheet].frames - 1, { fps: 13 }); }
