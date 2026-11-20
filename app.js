@@ -42,7 +42,7 @@ const META = {
   tresor: { w: 510, h: 510, frames: 6, ms: 350 },
   mymy_run: { w: 132, h: 175, frames: 9, ms: 120, u: 26.0 },
   dori_run: { w: 128, h: 181, frames: 9, ms: 120, u: 26.9 },
-  jordan_run: { w: 107, h: 182, frames: 9, ms: 120, u: 27.1 },
+  jordan_run: { w: 291, h: 393, frames: 8, ms: 110, u: 36.5 },
   elona_run: { w: 128, h: 178, frames: 9, ms: 120, u: 26.5 },
   mathieu_run: { w: 109, h: 189, frames: 9, ms: 120, u: 28.1 }
 };
