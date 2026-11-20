@@ -32,6 +32,7 @@ const META = {
   dori: { w: 258, h: 286, frames: 16, ms: 180, u: 26.6 },
   elona: { w: 269, h: 310, frames: 16, ms: 180, u: 28.8 },
   jordan: { w: 357, h: 334, frames: 12, ms: 350, u: 31.1 },
+  jordanb: { w: 229, h: 288, frames: 16, ms: 140, u: 27.0 },
   mathieu: { w: 251, h: 308, frames: 16, ms: 180, u: 28.6 },
   kithim: { w: 260, h: 302, frames: 16, ms: 180, u: 28.1 },
   kguit: { w: 240, h: 308, frames: 16, ms: 180, u: 28.6 },
@@ -52,6 +53,7 @@ const HERO = {
   dori: { idle: [0, 0], joy: [12, 15], runSheet: "dori_run", jf: 6 },
   elona: { idle: [0, 1], joy: [12, 15], runSheet: "elona_run", jf: 6 },
   jordan: { idle: [0, 1], joy: [4, 7], runSheet: "jordan_run", jf: 5 },
+  jordanb: { idle: [0, 0], joy: [0, 15], run: [0, 15], jf: 14, rf: 16 },
   mathieu: { idle: [0, 0], joy: [6, 9], runSheet: "mathieu_run", jf: 5 },
   kithim: { idle: [0, 0], joy: [7, 7], run: [1, 6], jf: 6, rf: 11 }
 };
@@ -315,7 +317,7 @@ function bIntro(i) {
   const lines = ["Il était une fois une aventurière qui pensait simplement fêter ses 30 ans…", "Mais cette année, une quête extraordinaire l'attendait.", "Trente trésors ont été dispersés. Cinq compagnons ont répondu à l'appel.", "Et une seule héroïne pourra les retrouver…"];
   const ps = lines.map((l, k) => { const e = el("p", k === 3 ? "big" : "", l); t.append(e); return e; });
   p.append(t);
-  const order = [["kithim", 13], ["mathieu", 28], ["elona", 43], ["mymy", 58], ["jordan", 73], ["dori", 88]], nm = { kithim: "Kithim", mathieu: "Mathieu", elona: "Elona", mymy: "Mymy", jordan: "Jordan", dori: "Dori" };
+  const order = [["kithim", 13], ["mathieu", 28], ["elona", 43], ["mymy", 58], ["jordanb", 73], ["dori", 88]], nm = { kithim: "Kithim", mathieu: "Mathieu", elona: "Elona", mymy: "Mymy", jordanb: "Jordan", dori: "Dori" };
   order.forEach(([n, x]) => { const h = hero(n, { s: .72, maxw: 17, cx: x }); h.style.bottom = U(30); p.append(h); const l = el("div", "names", nm[n]); l.style.left = U(x); l.style.top = U(121); l.style.fontSize = U(2.6); p.append(l); });
   const done = !!st.unlocked[i];
   if (done) ps.forEach(e => e.classList.add("in"));
@@ -334,7 +336,7 @@ function bMap(i) {
   const sc = scene(THEMES[4], 3), card = newCard("✦ Les compagnons arrivent… ✦");
   p.append(sc, card);
   const done = !!st.unlocked[i];
-  const names = [["kithim", 8], ["mathieu", 20.5], ["elona", 33], ["mymy", 45.5], ["jordan", 58], ["dori", 70.5]];
+  const names = [["kithim", 8], ["mathieu", 20.5], ["elona", 33], ["mymy", 45.5], ["jordanb", 58], ["dori", 70.5]];
   const line = names.map(([n, x]) => { const a = hero(n, { s: .6, maxw: 14.5, cx: x + 2 }); a.style.bottom = U(4); a.style.opacity = done ? 1 : 0; a.style.transition = "opacity .5s"; sc.append(a); return a; });
   const map = el("div", "map", MAPSVG), bam = el("div", "bam", BAM);
   sc.append(map, bam);
@@ -365,7 +367,7 @@ function bMap(i) {
 }
 
 const GTYPES = ["tap", "shake", "cat", "bushes", "hold", "run"];
-const GHERO = ["mymy", "dori", "kithim", "jordan", "mathieu", "elona"];
+const GHERO = ["mymy", "dori", "kithim", "jordanb", "mathieu", "elona"];
 const GHINT = { tap: "✦ Touche le cadeau pour l'ouvrir ✦", shake: "✦ Secoue le cadeau : touche-le 3 fois ✦", cat: "✦ Touche le chat : il va t'aider ✦", bushes: "✦ Le cadeau se cache sous un buisson ✦", hold: "✦ Maintiens ton doigt sur le cadeau ✦", run: "✦ Touche le sol : ton héros court au cadeau ✦" };
 function bGift(i) {
   const def = PAGES[i], n = def.n, done = !!st.unlocked[i];
