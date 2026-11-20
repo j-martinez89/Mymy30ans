@@ -31,7 +31,7 @@ const META = {
   mymy: { w: 280, h: 292, frames: 16, ms: 180, u: 27.2 },
   dori: { w: 258, h: 286, frames: 16, ms: 180, u: 26.6 },
   elona: { w: 269, h: 310, frames: 16, ms: 180, u: 28.8 },
-  jordan: { w: 357, h: 334, frames: 12, ms: 350, u: 31.1 },
+  jordan: { w: 357, h: 334, frames: 12, ms: 350, u: 29.2 },
   jordanb: { w: 210, h: 380, frames: 9, ms: 180, u: 28.2 },
   jordb_joy: { w: 355, h: 377, frames: 9, ms: 180, u: 28.1 },
   mathieu: { w: 251, h: 308, frames: 16, ms: 180, u: 28.6 },
