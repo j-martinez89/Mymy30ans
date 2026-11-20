@@ -32,7 +32,7 @@ const META = {
   dori: { w: 258, h: 286, frames: 16, ms: 180, u: 26.6 },
   elona: { w: 269, h: 310, frames: 16, ms: 180, u: 28.8 },
   jordan: { w: 357, h: 334, frames: 12, ms: 350, u: 31.1 },
-  jordanb: { w: 229, h: 288, frames: 16, ms: 140, u: 27.0 },
+  jordanb: { w: 291, h: 393, frames: 8, ms: 110, u: 36.5 },
   mathieu: { w: 251, h: 308, frames: 16, ms: 180, u: 28.6 },
   kithim: { w: 260, h: 302, frames: 16, ms: 180, u: 28.1 },
   kguit: { w: 240, h: 308, frames: 16, ms: 180, u: 28.6 },
@@ -53,7 +53,7 @@ const HERO = {
   dori: { idle: [0, 0], joy: [12, 15], runSheet: "dori_run", jf: 6 },
   elona: { idle: [0, 1], joy: [12, 15], runSheet: "elona_run", jf: 6 },
   jordan: { idle: [0, 1], joy: [4, 7], runSheet: "jordan_run", jf: 5 },
-  jordanb: { idle: [0, 0], joy: [0, 15], runSheet: "jordan_run", jf: 14 },
+  jordanb: { idle: [0, 0], joy: [3, 4], run: [0, 7], jf: 6, rf: 11 },
   mathieu: { idle: [0, 0], joy: [6, 9], runSheet: "mathieu_run", jf: 5 },
   kithim: { idle: [0, 0], joy: [7, 7], run: [1, 6], jf: 6, rf: 11 }
 };

@@ -1,6 +1,6 @@
 // Service worker : le livre fonctionne hors-ligne après la première ouverture.
 // Pour publier une mise à jour, change le numéro de version ci-dessous.
-const VERSION = "livre-v14";
+const VERSION = "livre-v15";
 const FILES = [
   "./",
   "./index.html",
