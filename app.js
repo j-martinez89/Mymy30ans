@@ -53,7 +53,7 @@ const HERO = {
   dori: { idle: [0, 0], joy: [12, 15], runSheet: "dori_run", jf: 6 },
   elona: { idle: [0, 1], joy: [12, 15], runSheet: "elona_run", jf: 6 },
   jordan: { idle: [0, 1], joy: [4, 7], runSheet: "jordan_run", jf: 5 },
-  jordanb: { idle: [0, 0], joy: [0, 15], run: [0, 15], jf: 14, rf: 16 },
+  jordanb: { idle: [0, 0], joy: [0, 15], runSheet: "jordan_run", jf: 14 },
   mathieu: { idle: [0, 0], joy: [6, 9], runSheet: "mathieu_run", jf: 5 },
   kithim: { idle: [0, 0], joy: [7, 7], run: [1, 6], jf: 6, rf: 11 }
 };
